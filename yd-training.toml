@@ -1,0 +1,43 @@
+# Where training may run, read by configure.py.
+#
+# YellowDog tries the regions in this order: every availability zone in the first
+# region, then the next region, until one has capacity. Each region needs only a
+# VPC whose subnets reach the internet (through an internet gateway or a NAT
+# gateway); configure.py finds the subnets and uses the VPC's default security group.
+regions = [
+  "eu-west-2",       # London
+  "eu-west-3",       # Paris
+  "eu-central-1",    # Frankfurt
+  "eu-north-1",      # Stockholm
+  "us-east-1",       # N. Virginia
+  "us-west-2",       # Oregon
+  "ca-central-1",    # Canada
+  "sa-east-1",       # Sao Paulo
+  "ap-south-1",      # Mumbai
+  "ap-northeast-1",  # Tokyo
+  "ap-northeast-2",  # Seoul
+  "ap-southeast-2",  # Sydney
+]
+
+# Each region's default VPC is used. To use your own VPC instead, give its Name tag
+# or ID here, or as AWS_VPC in .env (which wins). It must have the same name in
+# every region, or use an ID and a single region.
+# vpc = "my-vpc"
+
+instance_type = "g5.xlarge"   # 1 x NVIDIA A10G
+boot_volume_gb = 100
+
+# Ubuntu 24.04 with the NVIDIA driver: AWS's Deep Learning Base AMI, looked up in
+# each region through this public SSM parameter.
+ami_parameter = "/aws/service/deeplearning/ami/x86_64/base-oss-nvidia-driver-gpu-ubuntu-24.04/latest/ami-id"
+
+# The IAM user YellowDog launches instances as, and where its access key is kept
+# in YellowDog, as keyring/credential.
+iam_user = "yd-training-provisioner"
+credential = "yd-training/yd-training-aws"
+
+# The worker pool. It starts with no nodes, so nothing is billed until a task waits.
+[pool]
+max_nodes = 1            # the most instances at once, and so the cost ceiling
+idle_node_minutes = 5    # a node with no work is terminated after this long
+node_boot_minutes = 15   # a node that hasn't registered by then counts as failed

@@ -1,0 +1,12 @@
+.venv/
+.uv/
+.hf/
+__pycache__/
+data/
+model-output/
+.env
+.idea/
+yellowdog-resources.json
+.ipynb_checkpoints/
+yd-training-run.ipynb
+yd-training-report.html

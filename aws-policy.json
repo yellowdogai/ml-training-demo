@@ -1,0 +1,109 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "LaunchOnlyTaggedInstances",
+      "Effect": "Allow",
+      "Action": "ec2:RunInstances",
+      "Resource": "arn:aws:ec2:*:ACCOUNT_ID:instance/*",
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestTag/Project": "yd-training"
+        }
+      }
+    },
+    {
+      "Sid": "WhatALaunchUses",
+      "Effect": "Allow",
+      "Action": "ec2:RunInstances",
+      "NotResource": "arn:aws:ec2:*:ACCOUNT_ID:instance/*"
+    },
+    {
+      "Sid": "ManageOnlyTaggedInstances",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:TerminateInstances",
+        "ec2:StopInstances",
+        "ec2:StartInstances",
+        "ec2:RebootInstances"
+      ],
+      "Resource": "arn:aws:ec2:*:ACCOUNT_ID:instance/*",
+      "Condition": {
+        "StringEquals": {
+          "aws:ResourceTag/Project": "yd-training"
+        }
+      }
+    },
+    {
+      "Sid": "TagWhileCreating",
+      "Effect": "Allow",
+      "Action": "ec2:CreateTags",
+      "Resource": "*",
+      "Condition": {
+        "StringEquals": {
+          "ec2:CreateAction": [
+            "RunInstances",
+            "CreateFleet",
+            "CreateLaunchTemplate"
+          ]
+        }
+      }
+    },
+    {
+      "Sid": "TagOnlyTaggedResourcesAndKeepTheirProjectTag",
+      "Effect": "Allow",
+      "Action": "ec2:CreateTags",
+      "Resource": "*",
+      "Condition": {
+        "StringEquals": {
+          "aws:ResourceTag/Project": "yd-training"
+        },
+        "ForAllValues:StringNotEquals": {
+          "aws:TagKeys": [
+            "Project"
+          ]
+        }
+      }
+    },
+    {
+      "Sid": "FleetsAndLaunchTemplates",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:CreateFleet",
+        "ec2:ModifyFleet",
+        "ec2:DeleteFleets",
+        "ec2:CreateLaunchTemplate",
+        "ec2:DeleteLaunchTemplate",
+        "ec2:CreatePlacementGroup",
+        "ec2:DeletePlacementGroup"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "ReadEverythingEc2",
+      "Effect": "Allow",
+      "Action": "ec2:Describe*",
+      "Resource": "*"
+    },
+    {
+      "Sid": "PublicAmiParameters",
+      "Effect": "Allow",
+      "Action": [
+        "ssm:GetParameter",
+        "ssm:GetParameters"
+      ],
+      "Resource": "arn:aws:ssm:*::parameter/aws/service/*"
+    },
+    {
+      "Sid": "SpotServiceLinkedRole",
+      "Effect": "Allow",
+      "Action": "iam:CreateServiceLinkedRole",
+      "Resource": "arn:aws:iam::ACCOUNT_ID:role/aws-service-role/spot.amazonaws.com/*",
+      "Condition": {
+        "StringLike": {
+          "iam:AWSServiceName": "spot.amazonaws.com"
+        }
+      }
+    }
+  ]
+}
