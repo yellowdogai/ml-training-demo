@@ -58,6 +58,8 @@ if (Test-Path ".venv\Scripts\python.exe") {
     uv venv --seed --python $PythonVersion .venv; Assert-Success "Creating .venv"
 }
 uv pip install --python .venv\Scripts\python.exe -r requirements.txt; Assert-Success "Installing requirements.txt"
+# Strip notebook outputs, which can hold account details, from commits.
+if (Test-Path ".git") { & .venv\Scripts\python.exe -m nbstripout --install; Assert-Success "Setting up nbstripout" }
 
 Write-Step ".env"
 if (Test-Path ".env") {

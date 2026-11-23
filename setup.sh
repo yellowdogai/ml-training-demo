@@ -68,6 +68,8 @@ else
   uv venv --seed --python "$PYTHON_VERSION" .venv
 fi
 uv pip install --python .venv/bin/python -r requirements.txt
+# Strip notebook outputs, which can hold account details, from commits.
+[[ -d .git ]] && .venv/bin/python -m nbstripout --install
 
 step ".env"
 if [[ -f .env ]]; then

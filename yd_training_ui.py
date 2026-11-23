@@ -71,7 +71,8 @@ def _box(kind: str, title: str, body: str = "") -> HTML:
     colours = {"ok": ("#e8f5e9", "#2e7d32"), "warn": ("#fff8e1", "#b26a00"), "bad": ("#ffebee", "#c62828"),
                "info": ("#e3f2fd", "#1565c0")}
     background, border = colours[kind]
-    return HTML(f'<div style="background:{background};border-left:4px solid {border};padding:8px 12px;'
+    # The ignore classes stop JupyterLab rendering text between two dollar signs as maths.
+    return HTML(f'<div class="tex2jax_ignore mathjax_ignore" style="background:{background};border-left:4px solid {border};padding:8px 12px;'
                 f'margin:6px 0;color:#222"><b>{title}</b>{"<br>" + body if body else ""}</div>')
 
 
@@ -462,7 +463,7 @@ def results() -> None:
             )) + "</div>"))
     display(Markdown(f"Run `{metrics['run_id']}`, published at "
                      f"[huggingface.co/{repo}](https://huggingface.co/{repo}/tree/{revision}). "
-                     "RMSE is in $100,000s: lower is better."))
+                     "RMSE is in &#36;100,000s: lower is better."))
 
     # Score the held-out test rows with the published ONNX file alone, as a server would.
     data = load_california_housing(HERE / "data", REPO_COPY)
